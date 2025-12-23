@@ -1,0 +1,17 @@
+{
+  "name": "Art Gallery",
+  "settings": {
+    "gallery_id": {
+      "label": "Gallery ID"
+    },
+    "show_title": {
+      "label": "Show gallery title"
+    },
+    "show_product_info": {
+      "label": "Show product info"
+    },
+    "show_price": {
+      "label": "Show price"
+    }
+  }
+}

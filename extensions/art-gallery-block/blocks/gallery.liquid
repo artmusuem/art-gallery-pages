@@ -1,0 +1,92 @@
+{% comment %}
+  Art Gallery Block - for adding to theme sections
+{% endcomment %}
+
+{{ 'gallery.css' | asset_url | stylesheet_tag }}
+
+{% assign galleries_json = shop.metafields.art_gallery_pages.galleries.value %}
+{% assign selected_gallery = nil %}
+
+{% if galleries_json != blank and block.settings.gallery_id != blank %}
+  {% for gallery in galleries_json %}
+    {% if gallery.id == block.settings.gallery_id %}
+      {% assign selected_gallery = gallery %}
+      {% break %}
+    {% endif %}
+  {% endfor %}
+{% endif %}
+
+<div class="art-gallery-container" {{ block.shopify_attributes }}>
+  {% if selected_gallery == nil %}
+    <div class="art-gallery-empty">
+      <p>Art Gallery: Enter a Gallery ID in block settings.</p>
+    </div>
+  {% else %}
+    {% if block.settings.show_title %}
+      <h2 class="art-gallery-title">{{ selected_gallery.title }}</h2>
+    {% endif %}
+
+    <div class="art-gallery art-gallery--{{ selected_gallery.layout | default: 'grid' }}">
+      {% for product_gid in selected_gallery.products %}
+        {% assign product_id = product_gid | split: '/' | last %}
+        {% for p in collections.all.products %}
+          {% if p.id == product_id %}
+            <div class="art-gallery-item">
+              <a href="{{ p.url }}" class="art-gallery-link">
+                {% if p.featured_image %}
+                  <img
+                    src="{{ p.featured_image | image_url: width: 400 }}"
+                    alt="{{ p.featured_image.alt | default: p.title }}"
+                    loading="lazy"
+                    class="art-gallery-image"
+                  >
+                {% endif %}
+                {% if block.settings.show_product_info %}
+                  <div class="art-gallery-info">
+                    <h3 class="art-gallery-product-title">{{ p.title }}</h3>
+                    {% if block.settings.show_price %}
+                      <p class="art-gallery-price">{{ p.price | money }}</p>
+                    {% endif %}
+                  </div>
+                {% endif %}
+              </a>
+            </div>
+            {% break %}
+          {% endif %}
+        {% endfor %}
+      {% endfor %}
+    </div>
+  {% endif %}
+</div>
+
+{% schema %}
+{
+  "name": "Art Gallery",
+  "target": "section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "gallery_id",
+      "label": "Gallery ID"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_title",
+      "label": "Show title",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_product_info",
+      "label": "Show product info",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_price",
+      "label": "Show price",
+      "default": true
+    }
+  ]
+}
+{% endschema %}

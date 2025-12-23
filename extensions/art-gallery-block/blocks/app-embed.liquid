@@ -1,0 +1,69 @@
+{% comment %}
+  Art Gallery App Embed
+  Renders gallery on pages where data-gallery-id is present
+{% endcomment %}
+
+{{ 'gallery.css' | asset_url | stylesheet_tag }}
+
+<div id="art-gallery-app-root" 
+     data-gallery-id="{{ block.settings.gallery_id }}"
+     data-show-title="{{ block.settings.show_title }}"
+     data-show-info="{{ block.settings.show_product_info }}"
+     data-show-price="{{ block.settings.show_price }}">
+</div>
+
+<script>
+(function() {
+  const root = document.getElementById('art-gallery-app-root');
+  if (!root) return;
+  
+  const galleryId = root.dataset.galleryId;
+  if (!galleryId) {
+    root.innerHTML = '<p style="text-align:center;padding:2rem;color:#666;">Art Gallery: No gallery ID configured. Go to Theme Settings > App embeds to set up.</p>';
+    return;
+  }
+  
+  // Fetch gallery data from metafields via Storefront API would go here
+  // For now, display placeholder
+  root.innerHTML = `
+    <div style="max-width:1200px;margin:0 auto;padding:2rem;">
+      <p style="text-align:center;color:#666;">
+        Art Gallery "${galleryId}" will render here once connected to storefront API.
+      </p>
+    </div>
+  `;
+})();
+</script>
+
+{% schema %}
+{
+  "name": "Art Gallery",
+  "target": "body",
+  "settings": [
+    {
+      "type": "text",
+      "id": "gallery_id",
+      "label": "Gallery ID",
+      "info": "Enter the gallery ID from the Art Gallery Pages app (e.g., gallery_1766449715220)"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_title",
+      "label": "Show gallery title",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_product_info",
+      "label": "Show product info",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_price",
+      "label": "Show price",
+      "default": true
+    }
+  ]
+}
+{% endschema %}
